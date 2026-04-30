@@ -1,0 +1,6 @@
+@mss.ims.api_HostAddress = https://localhost:33481
+
+GET {{mss.ims.api_HostAddress}}/employees/
+Accept: application/json
+
+###

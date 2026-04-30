@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="ReadMe.txt" />
+  </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
+  <Project Path="mss.ims.api/mss.ims.api.csproj" />
+  <Project Path="mss.ims.application/mss.ims.application.csproj" />
+  <Project Path="mss.ims.domain/mss.ims.domain.csproj" />
+  <Project Path="mss.ims.infrastructure/mss.ims.infrastructure.csproj" />
+</Solution>

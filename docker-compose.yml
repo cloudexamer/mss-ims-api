@@ -1,0 +1,33 @@
+##Create an environment variable in your root folder .env with below
+##for example: POSTGRES_CONNECTION_STRING=Host=postgres;Port=5432;Database=imsdb;Username=postgres;Password=postgres
+##You can change between local and remote connectionstring
+
+services:
+  mss.ims.api:
+    image: ${DOCKER_REGISTRY-}mssimsapi
+    build:
+      context: .
+      dockerfile: mss.ims.api/Dockerfile
+    ports:
+      - "33480:8080"
+      - "33481:8081"
+    environment:
+      ConnectionStrings__DefaultConnection: ${POSTGRES_CONNECTION_STRING}
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:16
+    container_name: ims-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: imsdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "55432:5432"
+    volumes:
+      - ims_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  ims_postgres_data: 
