@@ -13,7 +13,15 @@ builder.Services.AddSwaggerGen();
 //builder.Services.AddOpenApi();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowUi", policy =>
+    {
+        policy.WithOrigins("https://ashy-sky-0cef6b510.7.azurestaticapps.net")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
@@ -31,8 +39,8 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
+app.UseCors("AllowUi");
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
