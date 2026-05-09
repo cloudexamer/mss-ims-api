@@ -68,6 +68,26 @@ pipeline {
 				}
 			}
 		}
+		
+		stage('Push Image to ECR') {
+			steps {
+				withCredentials([usernamePassword(credentialsId: 'aws-djacobo', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+					sh '''
+						aws --version
+
+						aws ecr get-login-password --region $AWS_REGION \
+						  | docker login --username AWS --password-stdin $ECR_REPO_URI
+
+						docker tag $APP_NAME:$IMAGE_TAG $ECR_REPO_URI:$IMAGE_TAG
+						docker tag $APP_NAME:$IMAGE_TAG $ECR_REPO_URI:latest
+
+						docker push $ECR_REPO_URI:$IMAGE_TAG
+						docker push $ECR_REPO_URI:latest
+					'''
+				}
+			}
+		}		
+		
     }
 
     post {
