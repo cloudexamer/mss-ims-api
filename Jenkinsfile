@@ -5,7 +5,9 @@ pipeline {
         APP_NAME = 'mss-ims-api'
         SOLUTION_FILE = 'mss.ims.slnx'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
-        DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = '1'
+		AWS_REGION = 'us-east-1'
+		ECR_REPO_URI = '848347449287.dkr.ecr.us-east-1.amazonaws.com/mss-ims-api'
+		DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = '1'
     }
 
     stages {
