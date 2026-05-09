@@ -6,7 +6,6 @@ pipeline {
         SOLUTION_FILE = 'mss.ims.slnx'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = '1'
-		INTERNAL_DIAGNOSTICS_KEY = 'local-jenkins-diagnostics-key'
     }
 
     stages {
@@ -39,45 +38,34 @@ pipeline {
             }
         }
 
-        stage('Smoke Test Container') {
-            steps {
-                sh '''
-                    docker rm -f $APP_NAME-test || true
+		stage('Smoke Test Container') {
+			steps {
+				withCredentials([string(credentialsId: 'internal-diagnostics-key', variable: 'INTERNAL_DIAGNOSTICS_KEY')]) {
+					sh '''
+						docker rm -f $APP_NAME-test || true
 
-                    docker network create jenkins-test || true
-					docker run -d \
-					  --name $APP_NAME-test \
-					  --network jenkins-test \
-					  -e BUILD_NUMBER=$BUILD_NUMBER \
-					  -e IMAGE_TAG=$IMAGE_TAG \
-					  -e INTERNAL_DIAGNOSTICS_KEY=$INTERNAL_DIAGNOSTICS_KEY \
-					  $APP_NAME:$IMAGE_TAG
+						docker network create jenkins-test || true
 
-                    sleep 10
+						docker run -d --name $APP_NAME-test --network jenkins-test -e BUILD_NUMBER=$BUILD_NUMBER -e IMAGE_TAG=$IMAGE_TAG -e INTERNAL_DIAGNOSTICS_KEY=$INTERNAL_DIAGNOSTICS_KEY $APP_NAME:$IMAGE_TAG
 
-                    docker ps -a
-                    docker logs $APP_NAME-test
+						sleep 10
 
-                    docker run --rm \
-                      --network jenkins-test \
-                      curlimages/curl:latest \
-                      curl -f http://$APP_NAME-test:8080/health
-					  
-					docker run --rm \
-					  --network jenkins-test \
-					  curlimages/curl:latest \
-					  curl -f \
-						-H "X-Internal-Diagnostics-Key: $INTERNAL_DIAGNOSTICS_KEY" \
-						http://$APP_NAME-test:8080/internal/version | tee version.json	
+						docker ps -a
+						docker logs $APP_NAME-test
 
-				    cat version.json
-					
-					grep "$BUILD_NUMBER" version.json
+						docker run --rm --network jenkins-test curlimages/curl:latest curl -f http://$APP_NAME-test:8080/health
 
-                    docker rm -f $APP_NAME-test
-                '''
-            }
-        }
+						docker run --rm --network jenkins-test curlimages/curl:latest curl -f -H "X-Internal-Diagnostics-Key: $INTERNAL_DIAGNOSTICS_KEY" http://$APP_NAME-test:8080/internal/version > version.json
+
+						cat version.json
+
+						grep "$BUILD_NUMBER" version.json
+
+						docker rm -f $APP_NAME-test
+					'''
+				}
+			}
+		}
     }
 
     post {
