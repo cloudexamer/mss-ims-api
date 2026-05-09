@@ -34,6 +34,11 @@ var app = builder.Build();
 //}
 
 app.MapGet("/", () => "MSS IMS API is running");
+app.MapGet("/health", () => Results.Ok(new
+{
+    status = "healthy",
+    timestamp = DateTimeOffset.UtcNow
+}));
 app.UseSwagger();
 app.UseSwaggerUI();
 
