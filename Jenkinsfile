@@ -45,14 +45,13 @@ pipeline {
                     docker rm -f $APP_NAME-test || true
 
                     docker network create jenkins-test || true
-
-                    docker run -d \
-                      --name $APP_NAME-test \
-                      --network jenkins-test \
+					docker run -d \
+					  --name $APP_NAME-test \
+					  --network jenkins-test \
 					  -e BUILD_NUMBER=$BUILD_NUMBER \
 					  -e IMAGE_TAG=$IMAGE_TAG \
-					  -e INTERNAL_DIAGNOSTICS_KEY=$INTERNAL_DIAGNOSTICS_KEY \					  
-                      $APP_NAME:$IMAGE_TAG
+					  -e INTERNAL_DIAGNOSTICS_KEY=$INTERNAL_DIAGNOSTICS_KEY \
+					  $APP_NAME:$IMAGE_TAG
 
                     sleep 10
 
