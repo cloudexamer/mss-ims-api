@@ -21,6 +21,7 @@
                 _mediator = mediator;
             }
 
+            [HttpGet("status")]
             public string GetStatus()
             {
                 return "Healthy";

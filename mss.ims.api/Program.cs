@@ -39,6 +39,29 @@ app.MapGet("/health", () => Results.Ok(new
     status = "healthy",
     timestamp = DateTimeOffset.UtcNow
 }));
+
+app.MapGet("/internal/version", (HttpContext context) =>
+{
+    var expectedKey = Environment.GetEnvironmentVariable("INTERNAL_DIAGNOSTICS_KEY");
+    var providedKey = context.Request.Headers["X-Internal-Diagnostics-Key"].FirstOrDefault();
+
+    if (!app.Environment.IsDevelopment())
+    {
+        if (string.IsNullOrWhiteSpace(expectedKey) || providedKey != expectedKey)
+        {
+            return Results.NotFound();
+        }
+    }
+
+    return Results.Ok(new
+    {
+        app = "mss-ims-api",
+        buildNumber = Environment.GetEnvironmentVariable("BUILD_NUMBER") ?? "local",
+        imageTag = Environment.GetEnvironmentVariable("IMAGE_TAG") ?? "local",
+        environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "unknown"
+    });
+});
+
 app.UseSwagger();
 app.UseSwaggerUI();
 
