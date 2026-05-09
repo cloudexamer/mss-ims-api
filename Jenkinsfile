@@ -44,24 +44,27 @@ pipeline {
             }
         }
 
-        stage('Smoke Test Container') {
-            steps {
-                sh '''
-                    docker rm -f $APP_NAME-test || true
+	stage('Smoke Test Container') {
+		steps {
+			sh '''
+				docker rm -f $APP_NAME-test || true
 
-                    docker run -d \
-                      --name $APP_NAME-test \
-                      -p 8085:80 \
-                      $APP_NAME:$IMAGE_TAG
+				docker run -d \
+				  --name $APP_NAME-test \
+				  -p 8085:8080 \
+				  $APP_NAME:$IMAGE_TAG
 
-                    sleep 10
+				sleep 10
 
-                    curl -f http://localhost:8085/health
+				docker ps -a
+				docker logs $APP_NAME-test
 
-                    docker rm -f $APP_NAME-test
-                '''
-            }
-        }
+				curl -f http://localhost:8085/health
+
+				docker rm -f $APP_NAME-test
+			'''
+		}
+	}
     }
 
     post {
