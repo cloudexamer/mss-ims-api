@@ -8,12 +8,6 @@ pipeline {
 		DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = '1'
     }
 
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
 
 	stage('Restore') {
 		steps {
@@ -43,28 +37,33 @@ pipeline {
                 '''
             }
         }
+		stage('Smoke Test Container') {
+			steps {
+				sh '''
+					docker rm -f $APP_NAME-test || true
 
-	stage('Smoke Test Container') {
-		steps {
-			sh '''
-				docker rm -f $APP_NAME-test || true
+					docker network create jenkins-test || true
 
-				docker run -d \
-				  --name $APP_NAME-test \
-				  -p 8085:8080 \
-				  $APP_NAME:$IMAGE_TAG
+					docker run -d \
+					  --name $APP_NAME-test \
+					  --network jenkins-test \
+					  $APP_NAME:$IMAGE_TAG
 
-				sleep 10
+					sleep 10
 
-				docker ps -a
-				docker logs $APP_NAME-test
+					docker ps -a
+					docker logs $APP_NAME-test
 
-				curl -f http://localhost:8085/health
+					docker run --rm \
+					  --network jenkins-test \
+					  curlimages/curl:latest \
+					  curl -f http://$APP_NAME-test:8080/health
 
-				docker rm -f $APP_NAME-test
-			'''
+					docker rm -f $APP_NAME-test
+				'''
+			}
 		}
-	}
+
     }
 
     post {
