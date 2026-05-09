@@ -21,6 +21,11 @@
                 _mediator = mediator;
             }
 
+            public string GetStatus()
+            {
+                return "Healthy";
+            }
+
             [HttpGet]
             public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
             {
