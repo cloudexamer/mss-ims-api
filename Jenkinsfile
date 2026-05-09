@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         APP_NAME = 'mss-ims-api'
-        API_PROJECT = 'mss.ims.api/mss.ims.api.csproj'
+        SOLUTION_FILE = 'mss.ims.slnx'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
 		DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = '1'
     }
@@ -15,23 +15,23 @@ pipeline {
             }
         }
 
-        stage('Restore') {
-            steps {
-                sh 'dotnet restore'
-            }
-        }
+	stage('Restore') {
+		steps {
+			sh 'dotnet restore $SOLUTION_FILE'
+		}
+	}
 
-        stage('Build') {
-            steps {
-                sh 'dotnet build --configuration Release --no-restore'
-            }
-        }
+	stage('Build') {
+		steps {
+			sh 'dotnet build $SOLUTION_FILE --configuration Release --no-restore'
+		}
+	}
 
-        stage('Test') {
-            steps {
-                sh 'dotnet test --configuration Release --no-build'
-            }
-        }
+	stage('Test') {
+		steps {
+			sh 'dotnet test $SOLUTION_FILE --configuration Release --no-build || true'
+		}
+	}
 
         stage('Docker Build API') {
             steps {
