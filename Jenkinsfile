@@ -6,6 +6,10 @@ pipeline {
         SOLUTION_FILE = 'mss.ims.slnx'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
 		AWS_REGION = 'us-east-1'
+		ECS_CLUSTER = 'mss-ims-cluster'
+		ECS_SERVICE = 'mss-ims-api-service'
+		ECS_TASK_FAMILY = 'mss-ims-api-task'
+		CONTAINER_NAME = 'mss-ims-api'		
 		ECR_REPO_URI = '848347449287.dkr.ecr.us-east-1.amazonaws.com/mss-ims-api'
 		DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = '1'
     }
