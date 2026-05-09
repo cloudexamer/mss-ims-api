@@ -2,7 +2,6 @@
   <Folder Name="/Solution Items/">
     <File Path="ReadMe.txt" />
   </Folder>
-  <Project Path="../mss.ims.unittests/mss.ims.unittests.csproj" Id="45f388ef-f223-4971-b9ec-f83e75f60939" />
   <Project Path="docker-compose.dcproj">
     <Build />
   </Project>
@@ -10,4 +9,5 @@
   <Project Path="mss.ims.application/mss.ims.application.csproj" />
   <Project Path="mss.ims.domain/mss.ims.domain.csproj" />
   <Project Path="mss.ims.infrastructure/mss.ims.infrastructure.csproj" />
+  <Project Path="mss.ims.unittests/mss.ims.unittests.csproj" />
 </Solution>
